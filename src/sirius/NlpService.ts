@@ -1,7 +1,7 @@
 import { CoveoSpeechToText } from './SpeechToText';
 import { TextIntentDetection } from './TextIntentDetection';
 
-export interface INlpService {
+export interface INlpServiceOptions {
   tooso_t: string;
   language: string;
   frequency: number;
@@ -15,7 +15,7 @@ export interface INlpService {
 }
 
 export class NlpService {
-  private opts: INlpService;
+  private opts: INlpServiceOptions;
   private intentInstance: TextIntentDetection;
   private speechInstance: CoveoSpeechToText;
 

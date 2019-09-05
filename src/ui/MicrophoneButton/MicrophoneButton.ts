@@ -7,10 +7,37 @@ import { SVGDom } from '../../utils/SVGDom';
 import 'styling/_MicrophoneButton';
 import { AccessibleButton } from '../../utils/AccessibleButton';
 import { l } from '../../strings/Strings';
-import { NlpService } from '../../sirius/NlpService';
+import { NlpService, INlpServiceOptions } from '../../sirius/NlpService';
 import { QueryStateModel } from '../../models/QueryStateModel';
 
 export interface IMicrophoneButtonOptions {}
+
+type EntityKind =
+  | 'keyword'
+  | 'price_relative_filter'
+  | 'price_lower_than'
+  | 'filter_brand'
+  | 'price_value'
+  | 'filter_rating'
+  | 'sort_order'
+  | 'intent'
+  | 'sort_type';
+
+export interface IEntity<T = string> {
+  confidence: number;
+  value: T;
+}
+
+type IIntentEntity = IEntity<'search' | 'sort'>;
+
+export interface INlpResponse {
+  entities: Record<EntityKind, IEntity>;
+  intentRequestTime: number;
+  intentResponseTime: number;
+  isFinal: boolean;
+  requestTime: number;
+  text: string;
+}
 
 export class MicrophoneButton extends Component {
   static ID = 'MicrophoneButton';
@@ -26,15 +53,20 @@ export class MicrophoneButton extends Component {
   private active = false;
   private buttonElement: HTMLElement;
   private nlpService: NlpService;
-  private nlpServiceOptions = {
+  private nlpServiceOptions: INlpServiceOptions = {
     wit_t: 'ORKUKZBOF6SJJ355XOAIMLBP5T7JU5JZ',
     tooso_t: 'aq4erx876cnmqz0pmaw1',
     language: 'en-US',
     frequency: 0.4,
-    delay: 1.0,
-    onMessage: (msg: any) => this.updateQuery(msg.text, msg.isFinal),
-    onStop: () => this.toggleActiveStatus(false)
+    onMessage: () => {},
+    onStop: () => this.toggleActiveStatus(false),
+    onIntent: data => this.onIntent(data),
+    onError: () => {},
+    onReady: () => {},
+    onStart: () => {}
   };
+
+  private lastNlpResponse: INlpResponse;
 
   constructor(public element: HTMLElement, public options?: IMicrophoneButtonOptions, bindings?: IComponentBindings) {
     super(element, MicrophoneButton.ID, bindings);
@@ -64,12 +96,8 @@ export class MicrophoneButton extends Component {
     });
   }
 
-  private updateQuery(query: string, isFinal: boolean) {
+  private updateQuery(query: string) {
     this.queryStateModel.set(QueryStateModel.attributesEnum.q, query);
-
-    if (isFinal) {
-      this.queryController.executeQuery();
-    }
   }
 
   private toggleActiveStatus(active: boolean) {
@@ -89,5 +117,29 @@ export class MicrophoneButton extends Component {
 
   private stopNlp() {
     this.nlpService.stop();
+  }
+
+  private onIntent(data: INlpResponse) {
+    console.log(data);
+    this.lastNlpResponse = data;
+
+    const entityKeys = Object.keys(data.entities) as EntityKind[];
+    if (!entityKeys.length) {
+      this.updateQuery(data.text);
+    } else {
+      entityKeys.forEach(key => this.processEntity(key, data.entities[key]));
+    }
+
+    this.queryController.executeQuery();
+  }
+
+  private processEntity(key: EntityKind, value: IEntity) {
+    if (key === 'intent') {
+      return this.processIntentEntity(value as IIntentEntity);
+    }
+  }
+
+  private processIntentEntity(value: IIntentEntity) {
+    this.updateQuery(this.lastNlpResponse.text);
   }
 }
