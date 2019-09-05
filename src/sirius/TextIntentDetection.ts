@@ -4,14 +4,26 @@ export interface ITextIntentDetection {
   onError: (err: any) => void;
 }
 
-export interface ITextIntentEntitiesValue {
+export interface IEntity<T = string> {
   confidence: number;
-  value: string;
-  type: string;
+  value: T;
 }
 
+export type EntityKind =
+  | 'keyword'
+  | 'price_relative_filter'
+  | 'price_lower_than'
+  | 'filter_brand'
+  | 'price_value'
+  | 'filter_rating'
+  | 'sort_order'
+  | 'intent'
+  | 'sort_type';
+
+export type IIntentEntity = IEntity<'search' | 'sort'>;
+
 export interface ITextIntentEntities {
-  [key: string]: ITextIntentEntitiesValue[];
+  [key: string]: IEntity[];
 }
 
 export interface ITextIntentMessage {
@@ -20,7 +32,7 @@ export interface ITextIntentMessage {
 }
 
 export interface ITextIntent extends ITextIntentMessage {
-  entities: ITextIntentEntities;
+  entities: Record<EntityKind, IEntity>;
   requestTime: number;
   intentRequestTime: number;
   intentResponseTime: number;

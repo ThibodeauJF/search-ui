@@ -8,36 +8,10 @@ import 'styling/_MicrophoneButton';
 import { AccessibleButton } from '../../utils/AccessibleButton';
 import { l } from '../../strings/Strings';
 import { NlpService, INlpServiceOptions } from '../../sirius/NlpService';
+import { ITextIntent, EntityKind, IEntity, IIntentEntity } from '../../sirius/TextIntentDetection';
 import { QueryStateModel } from '../../models/QueryStateModel';
 
 export interface IMicrophoneButtonOptions {}
-
-type EntityKind =
-  | 'keyword'
-  | 'price_relative_filter'
-  | 'price_lower_than'
-  | 'filter_brand'
-  | 'price_value'
-  | 'filter_rating'
-  | 'sort_order'
-  | 'intent'
-  | 'sort_type';
-
-export interface IEntity<T = string> {
-  confidence: number;
-  value: T;
-}
-
-type IIntentEntity = IEntity<'search' | 'sort'>;
-
-export interface INlpResponse {
-  entities: Record<EntityKind, IEntity>;
-  intentRequestTime: number;
-  intentResponseTime: number;
-  isFinal: boolean;
-  requestTime: number;
-  text: string;
-}
 
 export class MicrophoneButton extends Component {
   static ID = 'MicrophoneButton';
@@ -66,7 +40,7 @@ export class MicrophoneButton extends Component {
     onStart: () => {}
   };
 
-  private lastNlpResponse: INlpResponse;
+  private lastNlpIntent: ITextIntent;
 
   constructor(public element: HTMLElement, public options?: IMicrophoneButtonOptions, bindings?: IComponentBindings) {
     super(element, MicrophoneButton.ID, bindings);
@@ -119,9 +93,9 @@ export class MicrophoneButton extends Component {
     this.nlpService.stop();
   }
 
-  private onIntent(data: INlpResponse) {
-    console.log(data);
-    this.lastNlpResponse = data;
+  private onIntent(data: ITextIntent) {
+    this.logger.info(data);
+    this.lastNlpIntent = data;
 
     const entityKeys = Object.keys(data.entities) as EntityKind[];
     if (!entityKeys.length) {
@@ -140,6 +114,6 @@ export class MicrophoneButton extends Component {
   }
 
   private processIntentEntity(value: IIntentEntity) {
-    this.updateQuery(this.lastNlpResponse.text);
+    this.updateQuery(this.lastNlpIntent.text);
   }
 }

@@ -5,7 +5,6 @@ export interface INlpServiceOptions {
   tooso_t: string;
   language: string;
   frequency: number;
-  delay: number;
   wit_t: string;
   onStart?: () => void;
   onReady?: () => void;
@@ -20,7 +19,7 @@ export class NlpService {
   private intentInstance: TextIntentDetection;
   private speechInstance: CoveoSpeechToText;
 
-  constructor(opts: INlpService) {
+  constructor(opts: INlpServiceOptions) {
     this.opts = opts;
     this.initSpeechToText();
   }
