@@ -93,22 +93,22 @@ export class MicrophoneButton extends Component {
     this.nlpService.stop();
   }
 
-  private onIntent(data: ITextIntent) {
-    this.logger.info(data);
-    this.lastNlpIntent = data;
+  private onIntent(intent: ITextIntent) {
+    this.logger.info(intent);
+    this.lastNlpIntent = intent;
 
-    const entityKeys = Object.keys(data.entities) as EntityKind[];
+    const entityKeys = Object.keys(intent.entities) as EntityKind[];
     if (!entityKeys.length) {
-      this.updateQuery(data.text);
+      this.updateQuery(intent.text);
     } else {
-      entityKeys.forEach(key => this.processEntity(key, data.entities[key]));
+      entityKeys.forEach(key => this.processEntity(key, intent.entities[key]));
     }
 
     this.queryController.executeQuery();
   }
 
-  private processEntity(key: EntityKind, value: IEntity) {
-    if (key === 'intent') {
+  private processEntity(kind: EntityKind, value: IEntity) {
+    if (kind === 'intent') {
       return this.processIntentEntity(value as IIntentEntity);
     }
   }
