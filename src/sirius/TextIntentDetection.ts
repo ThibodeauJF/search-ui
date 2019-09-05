@@ -1,13 +1,26 @@
-interface ITextIntentDetection {
+export interface ITextIntentDetection {
   token: string;
-  onResult: (res: any) => void;
+  onResult: (res: ITextIntent) => void;
   onError: (err: any) => void;
 }
 
-interface ITextIntent {
+export interface ITextIntentEntitiesValue {
+  confidence: number;
+  value: string;
+  type: string;
+}
+
+export interface ITextIntentEntities {
+  [key: string]: ITextIntentEntitiesValue[];
+}
+
+export interface ITextIntentMessage {
   text: string;
   isFinal: boolean;
-  entities: any;
+}
+
+export interface ITextIntent extends ITextIntentMessage {
+  entities: ITextIntentEntities;
   requestTime: number;
   intentRequestTime: number;
   intentResponseTime: number;
@@ -55,7 +68,7 @@ export class TextIntentDetection {
     return this.cache[this.getCachedKey(msg)];
   }
 
-  private setCachedResult(body, isFinal: boolean, requestTime: number) {
+  private setCachedResult(body: any, isFinal: boolean, requestTime: number) {
     const cacheKey = this.getCachedKey(body._text);
     this.cache[cacheKey] = {
       text: body._text,
@@ -68,7 +81,7 @@ export class TextIntentDetection {
     this.emitResult(this.cache[cacheKey], isFinal, requestTime);
   }
 
-  private emitResult(res, isFinal: boolean, requestTime: number) {
+  private emitResult(res: ITextIntent, isFinal: boolean, requestTime: number) {
     const result = {
       ...res,
       isFinal,
@@ -78,7 +91,7 @@ export class TextIntentDetection {
     this.opts.onResult && this.opts.onResult(result);
   }
 
-  private emitError(err) {
+  private emitError(err: any) {
     this.opts.onError && this.opts.onError(err);
   }
 }

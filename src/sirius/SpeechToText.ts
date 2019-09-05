@@ -102,7 +102,6 @@ export class CoveoSpeechToText {
     this.socket.binaryType = 'arraybuffer';
 
     this.socket.onopen = e => {
-      console.log('socket.onopen', e);
       this.sendSocketData();
 
       getUserMedia(
@@ -135,13 +134,11 @@ export class CoveoSpeechToText {
     };
 
     this.socket.onmessage = e => {
-      console.log('socket.onmessage', e);
       const payload = JSON.parse(e.data);
       textParser.push(payload.text, payload.isFinal);
     };
 
     this.socket.onclose = e => {
-      console.log('socket.onclose', e);
       textParser.stop();
       if (mediaTrack) mediaTrack.stop();
       if (this.audioContext) this.audioContext.close();
@@ -195,7 +192,6 @@ export class CoveoSpeechToText {
   }
 
   private emitOnError(err) {
-    console.log('socket.onerror', err);
     this.isListening = false;
     this.opts.onError && this.opts.onError(err);
   }

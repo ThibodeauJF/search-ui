@@ -1,17 +1,18 @@
 import { CoveoSpeechToText } from './SpeechToText';
-import { TextIntentDetection } from './TextIntentDetection';
+import { TextIntentDetection, ITextIntent, ITextIntentMessage } from './TextIntentDetection';
 
 export interface INlpServiceOptions {
   tooso_t: string;
   language: string;
   frequency: number;
+  delay: number;
   wit_t: string;
-  onStart: () => void;
-  onReady: () => void;
-  onMessage: (res: any) => void;
-  onIntent: (res: any) => void;
-  onStop: () => void;
-  onError: (e: any) => void;
+  onStart?: () => void;
+  onReady?: () => void;
+  onMessage?: (res: ITextIntentMessage) => void;
+  onIntent?: (res: ITextIntent) => void;
+  onStop?: () => void;
+  onError?: (error: any) => void;
 }
 
 export class NlpService {
@@ -19,7 +20,7 @@ export class NlpService {
   private intentInstance: TextIntentDetection;
   private speechInstance: CoveoSpeechToText;
 
-  constructor(opts) {
+  constructor(opts: INlpService) {
     this.opts = opts;
     this.initSpeechToText();
   }
@@ -45,14 +46,14 @@ export class NlpService {
         this.emitOnStart();
         this.intentInstance = new TextIntentDetection({
           token: this.opts.wit_t,
-          onResult: res => this.intentInstance && this.emitOnIntent(res),
-          onError: err => this.intentInstance && this.emitOnError(err)
+          onResult: (res: ITextIntent) => this.intentInstance && this.emitOnIntent(res),
+          onError: (err: any) => this.intentInstance && this.emitOnError(err)
         });
       },
       onReady: () => this.emitOnReady(),
       onMessage: res => this.emitOnMessage(res),
       onStop: () => this.emitOnStop(),
-      onError: e => this.emitOnError(e)
+      onError: (e: any) => this.emitOnError(e)
     });
   }
 
@@ -64,15 +65,13 @@ export class NlpService {
     this.opts.onReady && this.opts.onReady();
   }
 
-  private emitOnMessage(res) {
-    // text, isFianl
-    this.opts.onMessage && this.opts.onMessage(res);
-    this.intentInstance && this.intentInstance.parse(res.text, res.isFinal);
+  private emitOnMessage(msg: ITextIntentMessage) {
+    this.opts.onMessage && this.opts.onMessage(msg);
+    this.intentInstance && this.intentInstance.parse(msg.text, msg.isFinal);
   }
 
-  private emitOnIntent(res) {
-    // text, isFinal, entities, requestTime, intentRrquestTime, intentResponseTime
-    this.opts.onIntent && this.opts.onIntent(res);
+  private emitOnIntent(intent: ITextIntent) {
+    this.opts.onIntent && this.opts.onIntent(intent);
   }
 
   private emitOnStop() {
