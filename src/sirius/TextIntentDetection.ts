@@ -20,8 +20,6 @@ export type EntityKind =
   | 'intent'
   | 'sort_type';
 
-export type IIntentEntity = IEntity<'search' | 'sort'>;
-
 export interface ITextIntentEntities {
   [key: string]: IEntity[];
 }

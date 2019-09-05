@@ -8,7 +8,7 @@ import 'styling/_MicrophoneButton';
 import { AccessibleButton } from '../../utils/AccessibleButton';
 import { l } from '../../strings/Strings';
 import { NlpService, INlpServiceOptions } from '../../sirius/NlpService';
-import { ITextIntent, EntityKind, IEntity, IIntentEntity } from '../../sirius/TextIntentDetection';
+import { ITextIntent, EntityKind, IEntity } from '../../sirius/TextIntentDetection';
 import { QueryStateModel } from '../../models/QueryStateModel';
 
 export interface IMicrophoneButtonOptions {}
@@ -94,10 +94,15 @@ export class MicrophoneButton extends Component {
   }
 
   private onIntent(intent: ITextIntent) {
-    this.logger.info(intent);
+    if (!intent.isFinal) {
+      return this.updateQuery(intent.text);
+    }
+
     this.lastNlpIntent = intent;
+    this.logger.info(this.lastNlpIntent);
 
     const entityKeys = Object.keys(intent.entities) as EntityKind[];
+
     if (!entityKeys.length) {
       this.updateQuery(intent.text);
     } else {
@@ -107,13 +112,13 @@ export class MicrophoneButton extends Component {
     this.queryController.executeQuery();
   }
 
-  private processEntity(kind: EntityKind, value: IEntity) {
-    if (kind === 'intent') {
-      return this.processIntentEntity(value as IIntentEntity);
+  private processEntity(kind: EntityKind, entity: IEntity) {
+    if (kind === 'keyword') {
+      return this.processKeywordEntity(entity);
     }
   }
 
-  private processIntentEntity(value: IIntentEntity) {
-    this.updateQuery(this.lastNlpIntent.text);
+  private processKeywordEntity(entity: IEntity) {
+    this.updateQuery(entity.value);
   }
 }
