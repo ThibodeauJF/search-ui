@@ -41,6 +41,7 @@ export class MicrophoneButton extends Component {
   };
 
   private lastNlpIntent: ITextIntent;
+  private lastQueryKeywords = '';
   private priceField = '@ccpricesale';
 
   constructor(public element: HTMLElement, public options?: IMicrophoneButtonOptions, bindings?: IComponentBindings) {
@@ -103,14 +104,20 @@ export class MicrophoneButton extends Component {
     this.logger.info(this.lastNlpIntent);
 
     const entityKeys = Object.keys(intent.entities) as EntityKind[];
-
-    if (!entityKeys.length) {
-      this.updateQuery(intent.text);
-    } else {
-      entityKeys.forEach(key => this.processEntity(key, intent.entities[key]));
-    }
+    entityKeys.forEach(key => this.processEntity(key, intent.entities[key]));
+    this.restoreLastQueryIfCurrentHasNoKeywords();
 
     this.queryController.executeQuery();
+  }
+
+  private restoreLastQueryIfCurrentHasNoKeywords() {
+    const currentIntentHasKeywords = !!this.lastNlpIntent['keyword'];
+
+    if (currentIntentHasKeywords || !this.lastQueryKeywords) {
+      return;
+    }
+
+    this.updateQuery(this.lastQueryKeywords);
   }
 
   private processEntity(kind: EntityKind, entities: IEntity[]) {
@@ -129,6 +136,7 @@ export class MicrophoneButton extends Component {
 
   private processKeywordEntity(entities: IEntity[]) {
     const query = entities.map(entity => entity.value).join(' ');
+    this.lastQueryKeywords = query;
     this.updateQuery(query);
   }
 
