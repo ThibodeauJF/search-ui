@@ -4,9 +4,9 @@ export interface ITextIntentDetection {
   onError: (err: any) => void;
 }
 
-export interface IEntity<T = string> {
+export interface IEntity {
   confidence: number;
-  value: T;
+  value: string;
 }
 
 export type EntityKind =
@@ -30,7 +30,7 @@ export interface ITextIntentMessage {
 }
 
 export interface ITextIntent extends ITextIntentMessage {
-  entities: Record<EntityKind, IEntity>;
+  entities: Record<EntityKind, IEntity[]>;
   requestTime: number;
   intentRequestTime: number;
   intentResponseTime: number;

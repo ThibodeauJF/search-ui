@@ -112,13 +112,14 @@ export class MicrophoneButton extends Component {
     this.queryController.executeQuery();
   }
 
-  private processEntity(kind: EntityKind, entity: IEntity) {
+  private processEntity(kind: EntityKind, entities: IEntity[]) {
     if (kind === 'keyword') {
-      return this.processKeywordEntity(entity);
+      return this.processKeywordEntity(entities);
     }
   }
 
-  private processKeywordEntity(entity: IEntity) {
-    this.updateQuery(entity.value);
+  private processKeywordEntity(entities: IEntity[]) {
+    const query = entities.map(entity => entity.value).join(' ');
+    this.updateQuery(query);
   }
 }
