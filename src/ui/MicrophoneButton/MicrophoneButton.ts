@@ -41,6 +41,7 @@ export class MicrophoneButton extends Component {
   };
 
   private lastNlpIntent: ITextIntent;
+  private priceField = '@ccpricesale';
 
   constructor(public element: HTMLElement, public options?: IMicrophoneButtonOptions, bindings?: IComponentBindings) {
     super(element, MicrophoneButton.ID, bindings);
@@ -116,10 +117,46 @@ export class MicrophoneButton extends Component {
     if (kind === 'keyword') {
       return this.processKeywordEntity(entities);
     }
+
+    if (kind === 'sort_type') {
+      return this.processSortTypeEntity(entities);
+    }
+
+    if (kind === 'price_relative_filter') {
+      this.processPriceRelativeFilter(entities);
+    }
   }
 
   private processKeywordEntity(entities: IEntity[]) {
     const query = entities.map(entity => entity.value).join(' ');
     this.updateQuery(query);
+  }
+
+  private processSortTypeEntity(entities: IEntity[]) {
+    const sortType = entities[0].value;
+
+    if (sortType === 'relevance') {
+      return this.updateSort('relevancy');
+    }
+
+    if (sortType === 'price') {
+      return this.updateSort(`${this.priceField} ${this.priceSortOrder}`);
+    }
+  }
+
+  private processPriceRelativeFilter(entities: IEntity[]) {
+    const value = entities[0].value;
+    const order = value === 'high' ? 'descending' : 'ascending';
+    this.updateSort(`${this.priceField} ${order}`);
+  }
+
+  private updateSort(sortType: string) {
+    this.queryStateModel.set(QueryStateModel.attributesEnum.sort, sortType);
+  }
+
+  private get priceSortOrder() {
+    const entity = this.lastNlpIntent.entities['sort_order'];
+    const value = entity ? entity[0].value : '';
+    return value === 'desc' ? 'descending' : 'ascending';
   }
 }
