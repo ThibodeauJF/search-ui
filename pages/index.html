@@ -10,9 +10,6 @@
   <script src="js/templates/templates.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      Coveo.Analytics.options.endpoint.defaultValue = 'https://usageanalyticsdev.coveo.com'
-      Coveo.Analytics.options.searchHub.defaultValue = 'impactdemo';
-      Coveo.Analytics.options.organization.defaultValue = 'jsuifacetsensedemo8fm8w12c';
       Coveo.SearchEndpoint.configureSampleEndpointV2({
         restUri: 'https://platformdev.cloud.coveo.com/rest/search',
         // Get this from the content browser API calls (Bearer token)
@@ -22,13 +19,12 @@
         }
       });
       Coveo.init(document.body);
-    })
+    });
   </script>
 </head>
 
 <body id="search" class="CoveoSearchInterface" data-enable-history="true">
   <div class="CoveoFolding"></div>
-  <div class="CoveoAnalytics"></div>
   <div class="coveo-tab-section">
     <a class="CoveoTab" data-id="All" data-caption="All Content"></a>
   </div>
