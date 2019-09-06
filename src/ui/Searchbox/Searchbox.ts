@@ -102,7 +102,7 @@ export class Searchbox extends Component {
      *
      * Default value is `true`.
      */
-    enableSpeechToText: ComponentOptions.buildBooleanOption({ defaultValue: true })
+    enableSpeechToText: ComponentOptions.buildBooleanOption({ defaultValue: false })
   };
 
   /**

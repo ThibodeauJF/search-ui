@@ -11,6 +11,7 @@ import { Utils } from '../../utils/Utils';
 import { ComponentOptions } from '../Base/ComponentOptions';
 import { Assert } from '../../misc/Assert';
 import { Initialization } from '../Base/Initialization';
+import { DynamicRangeFacet } from '../DynamicFacet/DynamicRangeFacet';
 
 export interface IDynamicFacetManagerOptions {
   enableReorder?: boolean;
@@ -134,7 +135,9 @@ export class DynamicFacetManager extends Component {
   }
 
   private handleAfterComponentsInitialization() {
-    const allDynamicFacets = this.bindings.searchInterface.getComponents<DynamicFacet>('DynamicFacet');
+    const dynamicFacets = this.bindings.searchInterface.getComponents<DynamicFacet>('DynamicFacet');
+    const dynamicRangeFacets = this.bindings.searchInterface.getComponents<DynamicRangeFacet>('DynamicRangeFacet');
+    const allDynamicFacets = [...dynamicFacets, ...dynamicRangeFacets];
     this.childrenFacets = allDynamicFacets.filter(dynamicFacet => this.element.contains(dynamicFacet.element));
     this.childrenFacets.forEach(dynamicFacet => (dynamicFacet.dynamicFacetManager = this));
 
