@@ -285,6 +285,9 @@ lazyCategoryFacet();
 import { lazyDynamicFacet } from './ui/DynamicFacet/LazyDynamicFacet';
 lazyDynamicFacet();
 
+import { lazyDynamicRangeFacet } from './ui/DynamicFacet/LazyDynamicRangeFacet';
+lazyDynamicRangeFacet();
+
 import { lazyDynamicFacetManager } from './ui/DynamicFacetManager/LazyDynamicFacetManager';
 lazyDynamicFacetManager();
 
