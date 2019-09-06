@@ -10,6 +10,7 @@ import { l } from '../../strings/Strings';
 import { NlpService, INlpServiceOptions } from '../../sirius/NlpService';
 import { ITextIntent, EntityKind, IEntity } from '../../sirius/TextIntentDetection';
 import { QueryStateModel } from '../../models/QueryStateModel';
+import { BreadcrumbEvents } from '../../events/BreadcrumbEvents';
 
 export interface IMicrophoneButtonOptions {}
 
@@ -100,6 +101,8 @@ export class MicrophoneButton extends Component {
       return this.updateQuery(intent.text);
     }
 
+    this.bind.trigger(this.root, BreadcrumbEvents.clearBreadcrumb);
+
     this.lastNlpIntent = intent;
     this.logger.info(this.lastNlpIntent);
 
@@ -174,10 +177,18 @@ export class MicrophoneButton extends Component {
   }
 
   private processFilterBrand(entities: IEntity[]) {
-    // TODO: JFs working on this
+    const attributeId = QueryStateModel.getFacetId('brand');
+    const brandValue = entities[0].value;
+    const capitalizedBrandValue = brandValue.charAt(0).toUpperCase() + brandValue.slice(1);
+    this.queryStateModel.set(attributeId, [capitalizedBrandValue]);
   }
 
   private processFilterRating(entities: IEntity[]) {
-    // TODO: JFs working on this
+    const rating = parseInt(entities[0].value);
+    if (isNaN(rating)) {
+      return;
+    }
+
+    // TODO: get rating facet
   }
 }
