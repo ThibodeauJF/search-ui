@@ -121,16 +121,21 @@ export class MicrophoneButton extends Component {
   }
 
   private processEntity(kind: EntityKind, entities: IEntity[]) {
-    if (kind === 'keyword') {
-      return this.processKeywordEntity(entities);
-    }
+    switch (kind) {
+      case 'keyword':
+        return this.processKeywordEntity(entities);
 
-    if (kind === 'sort_type') {
-      return this.processSortTypeEntity(entities);
-    }
+      case 'sort_type':
+        return this.processSortTypeEntity(entities);
 
-    if (kind === 'price_relative_filter') {
-      this.processPriceRelativeFilter(entities);
+      case 'price_relative_filter':
+        return this.processPriceRelativeFilter(entities);
+
+      case 'filter_brand':
+        return this.processFilterBrand(entities);
+
+      case 'filter_rating':
+        return this.processFilterRating(entities);
     }
   }
 
@@ -166,5 +171,13 @@ export class MicrophoneButton extends Component {
     const entity = this.lastNlpIntent.entities['sort_order'];
     const value = entity ? entity[0].value : '';
     return value === 'desc' ? 'descending' : 'ascending';
+  }
+
+  private processFilterBrand(entities: IEntity[]) {
+    // TODO: JFs working on this
+  }
+
+  private processFilterRating(entities: IEntity[]) {
+    // TODO: JFs working on this
   }
 }
