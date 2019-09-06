@@ -11,6 +11,7 @@ import { NlpService, INlpServiceOptions } from '../../sirius/NlpService';
 import { ITextIntent, EntityKind, IEntity } from '../../sirius/TextIntentDetection';
 import { QueryStateModel } from '../../models/QueryStateModel';
 import { BreadcrumbEvents } from '../../events/BreadcrumbEvents';
+import { DynamicRangeFacet } from '../DynamicFacet/DynamicRangeFacet';
 
 export interface IMicrophoneButtonOptions {}
 
@@ -189,6 +190,16 @@ export class MicrophoneButton extends Component {
       return;
     }
 
-    // TODO: get rating facet
+    const ratingRangeFacets: DynamicRangeFacet[] = this.searchInterface
+      .getComponents<DynamicRangeFacet>('DynamicRangeFacet')
+      .filter(facet => facet.options.id === 'rating');
+
+    if (!ratingRangeFacets.length) {
+      return;
+    }
+
+    const ratingFacet = ratingRangeFacets[0];
+    const value = ratingFacet.values.allValues[rating - 1];
+    value && ratingFacet.selectValue(value);
   }
 }
