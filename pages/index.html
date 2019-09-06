@@ -34,7 +34,7 @@
   <div class="coveo-main-section">
     <div class="coveo-facet-column">
       <div class="CoveoDynamicFacetManager">
-        <div class="CoveoDynamicFacet" id="BrandFacet" data-id="Brand" data-title="Brand" data-field="@ccbrand"></div>
+        <div class="CoveoDynamicFacet" id="BrandFacet" data-id="brand" data-title="Brand" data-field="@ccbrand"></div>
         <div class="CoveoDynamicRangeFacet" id="PriceFacet" data-id="Price" data-title="Price" data-field="@ccpricesale"
           data-number-of-values="7" data-ranges='[
           {"start": 0, "end": 100, "label": "Under $100"},
@@ -45,12 +45,13 @@
           {"start": 2500, "end": 5000, "label": "$2500 to $5000"},
           {"start": 5000, "end": 100000, "label": "$5000 and more"}]'></div>
         <div class="CoveoDynamicFacet" id="ProductTypeFacet" data-title="Product Type" data-field="@cccategoryl2"></div>
-        <div class="CoveoDynamicRangeFacet ratings" id="RatingFacet" data-id="Rating" data-title="Rating"
-          data-field="@ccratingaverage" data-number-of-values="4" data-custom-sort="4..99,3..3,2..2,1..1" data-ranges='[
-                    {"start": 1, "end": 2, "label": "&star;&star;&star;&star;"},
-                    {"start": 2, "end": 3, "label": "&star;&star;&star;"},
-                    {"start": 3, "end": 4, "label": "&star;&star;"},
-                    {"start": 4, "end": 100, "label": "&star; and up"}]'></div>
+        <div class="CoveoDynamicRangeFacet ratings" id="RatingFacet" data-id="rating" data-title="Rating"
+          data-field="@ccratingaverage" data-number-of-values="5" data-ranges='[
+                    {"start": 0, "end": 2, "label": "&star;"},
+                    {"start": 2, "end": 3, "label": "&star;&star;"},
+                    {"start": 3, "end": 4, "label": "&star;&star;&star;"},
+                    {"start": 4, "end": 5, "label": "&star;&star;&star;&star;"},
+                    {"start": 5, "end": 100, "label": "&star;&star;&star;&star;&star;"}]'></div>
         <div class="CoveoDynamicFacet" data-title="Smart capable" data-field="@smart_capable"></div>
         <div class="CoveoDynamicFacet" data-title="Wall mountable" data-field="@wall_mountable"></div>
         <div class="CoveoDynamicFacet" data-title="Surround sound supported" data-field="@surround_sound_supported">
